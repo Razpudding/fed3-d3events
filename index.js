@@ -20,7 +20,7 @@ var x = d3.scaleLinear()
 var y = d3.scaleLinear()
 .range([height, 0]);
 
-var color = d3.scaleOrdinal(d3.schemeCategory10);
+var color = d3.scaleOrdinal(["orange","grey","black"]);
 
 var xAxis = d3.axisBottom(x)
 
@@ -78,9 +78,15 @@ d3.json("eventData.json", function(error, data) {
 	.attr("r", 3.5)
 	.attr("cx", function(d) { return x(d.lng); })
 	.attr("cy", function(d) { return y(d.lat); })
-	.style("fill", function(d) { 
-		d.lastupdated
-		return color(d.lastupdated); 
+	.style("fill", function(d) {
+		//Credit for date calculation goes to https://stackoverflow.com/a/3224854/5440366 
+		let now = new Date()
+		let then = new Date(d.lastupdated)
+		let deltaTime = Math.abs(now.getTime() - then.getTime());
+		let deltaYEars = Math.round(deltaTime / (1000 * 3600 * 24 * 365.25));
+		//console.log(deltaYEars, color(deltaYEars))
+		deltaYEars = deltaYEars > 2 ? 2 : deltaYEars
+		return color(deltaYEars); 
 	});
 
 
