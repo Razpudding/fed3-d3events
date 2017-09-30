@@ -43,15 +43,12 @@ d3.json("eventData.json", function(error, data) {
 			d.lat = 52,3780870
 			d.lng = 4,9011690
 		}
-  	//else { console.log(d["location"]["latitude"])}
-  	d.lat = parseFloat(d["location"]["latitude"].replace(',', '.'));
-  	d.lng = parseFloat(d["location"]["longitude"].replace(',', '.'));
-  	console.log(d.lat, d.lng)
-  });
+  		d.lat = parseFloat(d["location"]["latitude"].replace(',', '.'));
+  		d.lng = parseFloat(d["location"]["longitude"].replace(',', '.'));
+	});
 
 	x.domain(d3.extent(data, function(d) { return d.lng; }));
 	y.domain(d3.extent(data, function(d) { return d.lat; }));
-	console.log(x.domain(), y.domain())
 	svg.append("g")
 	.attr("class", "x axis")
 	.attr("transform", "translate(0," + height + ")")
@@ -81,26 +78,11 @@ d3.json("eventData.json", function(error, data) {
 	.attr("r", 3.5)
 	.attr("cx", function(d) { return x(d.lng); })
 	.attr("cy", function(d) { return y(d.lat); })
-	.style("fill", function(d) { return color(d.last); });
+	.style("fill", function(d) { 
+		d.lastupdated
+		return color(d.lastupdated); 
+	});
 
-	var legend = svg.selectAll(".legend")
-	.data(color.domain())
-	.enter().append("g")
-	.attr("class", "legend")
-	.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-	legend.append("rect")
-	.attr("x", width - 18)
-	.attr("width", 18)
-	.attr("height", 18)
-	.style("fill", color);
-
-	legend.append("text")
-	.attr("x", width - 24)
-	.attr("y", 9)
-	.attr("dy", ".35em")
-	.style("text-anchor", "end")
-	.text(function(d) { return d; });
 
 });
 
