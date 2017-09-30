@@ -18,3 +18,8 @@ a url to an image of the event
 * location: _object_ With a name, city, adress, zipcode and lat long
 The list above is of datatype string unless mentioned otherwise
 
+Todo:
+* Zoom in on the data a bit more to remove outliers (do this with the range possibly)
+* Add interaction (filtering data)
+* Add image of event or title on mouseover
+* Add the legend back
