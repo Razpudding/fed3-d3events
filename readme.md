@@ -19,7 +19,16 @@ a url to an image of the event
 The list above is of datatype string unless mentioned otherwise
 
 Todo:
+* Describe steps taken to make datavis
+V Translate categories and map them to color
+* Make scatterplot of price and category
 * Zoom in on the data a bit more to remove outliers (do this with the range possibly)
 * Add interaction (filtering data)
-* Add image of event or title on mouseover
+* Add image of event or title on mouseover (possible to the right of the graph)
 * Add the legend back
+
+Steps taken
+* Figure out what the categories mean
+    - Sort the data by category
+    - Write down what I think each item in a cat has in common
+    - Make an enum out of my assumptions for each cat

@@ -9,10 +9,12 @@ var glob;
 // run faster and makes the print outs easier to read.
 // If one of the tests works, we simply copy the logic to the main code below it
 d3.json("eventData.json", function(error, data) {
-	if (error) { throw error }
+	if (error) { 
+		throw error 
+	}
 	//Make a selection of the data
 	glob = data[0]
-	//data.splice(500)	//First x elements
+	data.splice(10)	//First x elements
 	//If you turn the forEach into a map you can chain the sort after it
 	// By using dot notation :)
 	data.forEach((d) => {
@@ -20,7 +22,7 @@ d3.json("eventData.json", function(error, data) {
 		d.code = subcats[0] + subcats[1] + "," + subcats[2]
 	})
 	data.sort(function(x, y){
-	  	return d3.ascending(x.code, y.code);
+		return d3.ascending(x.code, y.code);
 	})
 	data.forEach((d) => {
 		if (d.code == "22,19"){
@@ -29,8 +31,6 @@ d3.json("eventData.json", function(error, data) {
 		console.log(d["title"], d.code)
 	})
 	//console.table(data)
-
-
 });
 
 const types = {
@@ -46,7 +46,7 @@ const types = {
 	"22,1" : "verzameling, openbare kunst",
 	"22,10" : "Natuur",
 	"22,11" : "Parken",
-	"22,12" : "(Stads)Stranden",
+	"22,12" : "Stranden",
 	"22,16" : "Forten",
 	"22,18" : "Bossen",
 	"22,19" : "Willekeurig?",
@@ -55,7 +55,7 @@ const types = {
 	"22,6" : "Buitenplaatsen",
 	"22,7" : "Kerken",
 	"22,8" : "Molens",
-	"22,9" : "Monumenten",
+	"22,9" : "Monumenten"
 }
 
 // This chart is based off of: https://bl.ocks.org/mbostock/3887118
@@ -95,13 +95,12 @@ d3.json("eventData.json", function(error, data) {
 			d.lat = 52,3780870
 			d.lng = 4,9011690
 		}
-  		d.lat = parseFloat(d["location"]["latitude"].replace(',', '.'));
-  		d.lng = parseFloat(d["location"]["longitude"].replace(',', '.'));
+		d.lat = parseFloat(d["location"]["latitude"].replace(',', '.'));
+		d.lng = parseFloat(d["location"]["longitude"].replace(',', '.'));
   		//Next, we'll write our own version of categories to the root of the object
   		let subcats = d["types"][0]["catid"].split(".")
-		d.code = subcats[0] + subcats[1] + "," + subcats[2]
-
-	});
+  		d.code = types[subcats[0] + subcats[1] + "," + subcats[2]] || types["22.19"]
+  	});
 	// Now that the data has been reformatted to our liking we can calculate the domains
 	// For our axes
 	x.domain(d3.extent(data, function(d) { return d.lng; }));
@@ -152,9 +151,26 @@ d3.json("eventData.json", function(error, data) {
 
 	});
 
+	var legend = svg.selectAll(".legend")
+	.data(color.domain())
+	.enter().append("g")
+	.attr("class", "legend")
+	.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+	legend.append("rect")
+	.attr("x", width - 18)
+	.attr("width", 18)
+	.attr("height", 18)
+	.style("fill", color);
+
+	legend.append("text")
+	.attr("x", width - 24)
+	.attr("y", 9)
+	.attr("dy", ".35em")
+	.style("text-anchor", "end")
+	.text(function(d) { return d; });
 
 });
-
 
 
 
