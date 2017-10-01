@@ -18,17 +18,27 @@ a url to an image of the event
 * location: _object_ With a name, city, adress, zipcode and lat long
 The list above is of datatype string unless mentioned otherwise
 
-Todo:
-* Describe steps taken to make datavis
-V Translate categories and map them to color
-* Make scatterplot of price and category
-* Zoom in on the data a bit more to remove outliers (do this with the range possibly)
-* Add interaction (filtering data)
-* Add image of event or title on mouseover (possible to the right of the graph)
-* Add the legend back
+## Features
+- Each event is mapped to a scatterplot where x and y axis are determined by longitutude and latitude, providing a rudimentary "map"
+- The color of each event is determined by the type of event (category) and connected to a label in the legend.
+- The color can also be mapped to how long ago the veent decription has been updated.
 
-Steps taken
+
+## Steps taken
+* Print a couple of objects in the dataset to make sense of the information it holds
+* Describe each of the variables in the dataset
+* Figure out which could be interesting to display and come up with a concept
 * Figure out what the categories mean
     - Sort the data by category
     - Write down what I think each item in a cat has in common
     - Make an enum out of my assumptions for each cat
+* Link the categories to the color
+
+## Todo:
+* Describe steps taken to make datavis
+V Translate categories and map them to color
+* Make scatterplot of price and category
+* Zoom in on the data a bit more to remove outliers (do this with the range possibly)
+* Add interaction (filtering data when clicking on legend, add class hidden)
+* Add image of event or title on mouseover (possible to the right of the graph)
+V Add the legend back
