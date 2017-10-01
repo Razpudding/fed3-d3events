@@ -23,7 +23,6 @@ The list above is of datatype string unless mentioned otherwise
 - The color of each event is determined by the type of event (category) and connected to a label in the legend.
 - The color can also be mapped to how long ago the veent decription has been updated.
 
-
 ## Steps taken
 * Print a couple of objects in the dataset to make sense of the information it holds
 * Describe each of the variables in the dataset
@@ -40,5 +39,6 @@ V Translate categories and map them to color
 * Make scatterplot of price and category
 * Zoom in on the data a bit more to remove outliers (do this with the range possibly)
 * Add interaction (filtering data when clicking on legend, add class hidden)
-* Add image of event or title on mouseover (possible to the right of the graph)
+V Add image of event or title on mouseover (possible to the right of the graph)
 V Add the legend back
+* Add a preview image to this readme.
