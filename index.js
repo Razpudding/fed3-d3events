@@ -40,6 +40,8 @@ printSomeData()
 //Let's call drawScatterPlot actually draw the scatterplot
 drawScatterPlot()
 
+
+
 // We'll use the code below to examine and experiment with the data
 // This code works with a subset of the data (using splice) which causes it to
 // run faster and makes the print outs easier to read.
@@ -98,6 +100,8 @@ function drawScatterPlot(){
 		.attr("x", width)
 	//	.attr("xlink:href", "https://media.iamsterdam.com/ndtrc/Images/20101028/efd2a27a-8e33-4463-8650-070ff2348f11.jpg")
 
+	var toolTip = d3.select("body").append("div").attr("class", "toolTip");
+	
 	// Let's draw the actual chart
 	// This chart is based off of: https://bl.ocks.org/mbostock/3887118
 	d3.json("eventData.json", function(error, data) {
@@ -168,8 +172,15 @@ function drawScatterPlot(){
 		})
 		//This line adds a mouseover event that changes the preview image to one corresponding
 		// to the right event
-		.on('mouseover', function(d) { changePreview(d["media"][0]["url"])})
-		glob = image;
+		.on('mouseover', function(d) { 
+			glob = toolTip
+			console.log(d["title"]); 
+			toolTip
+				.text(d.title)
+				.style("left", d3.event.pageX - 70 +"px")
+				.style("top", d3.event.pageY - 40 +"px")
+			changePreview(d["media"][0]["url"])
+		})
 		var legend = svg.selectAll(".legend")
 		.data(color.domain())
 		.enter().append("g")
