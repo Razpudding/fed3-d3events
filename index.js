@@ -112,7 +112,8 @@ function drawScatterPlot(){
 		//First we write the latlng info directly to the root of the object
 		data.forEach(function(d) {
 			if (isNaN(d["location"]["latitude"])){
-				console.log("empty one")
+				//TODO: there are way too many isnans here, investigate
+				//console.log("empty one")	
 				d.lat = 52,3780870
 				d.lng = 4,9011690
 			}
@@ -121,7 +122,10 @@ function drawScatterPlot(){
 	  		//Next, we'll write our own version of categories to the root of the object
 	  		let subcats = d["types"][0]["catid"].split(".")
 	  		d.code = types[subcats[0] + subcats[1] + "," + subcats[2]] || types["22.19"]
+	  		//console.log(d.code)
 	  	});
+		//console.log(data.forEach(d => console.log(d.code)))
+
 		// Now that the data has been reformatted to our liking we can calculate the domains
 		// For our axes
 		x.domain(d3.extent(data, function(d) { return d.lng; }));
@@ -181,11 +185,14 @@ function drawScatterPlot(){
 				.style("top", d3.event.pageY - 40 +"px")
 			changePreview(d["media"][0]["url"])
 		})
+
 		var legend = svg.selectAll(".legend")
 		.data(color.domain())
 		.enter().append("g")
 		.attr("class", "legend")
-		.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+		.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; })
+		.on('mouseenter', function(d) { update(d)})
+		.on('mouseout', showAll)
 
 		legend.append("rect")
 		.attr("x", width - 18)
@@ -198,7 +205,17 @@ function drawScatterPlot(){
 		.attr("y", 9)
 		.attr("dy", ".35em")
 		.style("text-anchor", "end")
-		.text(function(d) { return d; });
+		.text(function(d) { return d; })
+
+		function update(category){
+			d3.selectAll('circle')
+			.classed("hide", function(d) { return d.code !== category})
+		}
+
+		function showAll(){
+			d3.selectAll('circle')
+			.classed("hide", false)
+		}
 
 		//A function that allows us to dynamically change the source of the preview image
 		function changePreview(source){
