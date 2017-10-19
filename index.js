@@ -35,70 +35,32 @@ const types = {
 	"22,9" : "Monumenten"
 }
 
-//Turn the line below on when you want to run some tests or print out some data
-printSomeData()
 //Let's call drawScatterPlot actually draw the scatterplot
 drawScatterPlot()
-
-
-
-// We'll use the code below to examine and experiment with the data
-// This code works with a subset of the data (using splice) which causes it to
-// run faster and makes the print outs easier to read.
-// If one of the tests works, we simply copy the logic to the main code below it
-function printSomeData(){
-	d3.json("eventData.json", function(error, data) {
-		if (error) { 
-			throw error 
-		}
-		//Make a selection of the data
-		glob = data[0]
-		data.splice(10)	//First x elements
-		//If you turn the forEach into a map you can chain the sort after it
-		// By using dot notation :)
-		data.forEach((d) => {
-			let subcats = d["types"][0]["catid"].split(".")
-			d.code = subcats[0] + subcats[1] + "," + subcats[2]
-		})
-		data.sort(function(x, y){
-			//return d3.ascending(x.code, y.code);
-		})
-		data.forEach((d) => {
-			if (d.code == "22,19"){
-				//console.log(d)
-			}
-			//console.log(d["title"], d.code)
-		})
-		//console.table(data)
-	});
-}
 
 function drawScatterPlot(){
 	var x = d3.scaleLinear()
 	.range([0, width]);
-
 	var y = d3.scaleLinear()
 	.range([height, 0]);
-
 	//var color = d3.scaleOrdinal(["orange","grey","black"]);
 	var color = d3.scaleOrdinal(d3.schemeCategory20)
-
 	var xAxis = d3.axisBottom(x)
-
 	var yAxis = d3.axisLeft(y)
-
+	
 	var svg = d3.select("body").append("svg")
 	.attr("width", width + margin.left + margin.right + previewPicWidth)
 	.attr("height", height + margin.top + margin.bottom)
-	.append("g")
-	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 	//This element will hold our preview images when a user mouses over a circle
 	var image = svg.append("svg:image")
 		.attr("width", 400)
 		.attr("height", 400)
-		.attr("x", width)
-	//	.attr("xlink:href", "https://media.iamsterdam.com/ndtrc/Images/20101028/efd2a27a-8e33-4463-8650-070ff2348f11.jpg")
+		.attr("x", width + margin.left)
+	//I'm overwriting the reference to svg here because I need it to refer to the
+	// transformed group instead. Probably a nicer way to do this
+	svg = svg	
+	.append("g")
+	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 	var toolTip = d3.select("body").append("div").attr("class", "toolTip");
 	
@@ -111,25 +73,22 @@ function drawScatterPlot(){
 		//Let's rewrite the data a bit to more usable notation
 		//First we write the latlng info directly to the root of the object
 		data.forEach(function(d) {
-			if (isNaN(d["location"]["latitude"])){
-				//TODO: there are way too many isnans here, investigate
-				//console.log("empty one")	
+			if (isNaN(parseFloat(d["location"]["latitude"]))){
+				console.log("empty one")	
 				d.lat = 52,3780870
 				d.lng = 4,9011690
 			}
 			d.lat = parseFloat(d["location"]["latitude"].replace(',', '.'));
 			d.lng = parseFloat(d["location"]["longitude"].replace(',', '.'));
-	  		//Next, we'll write our own version of categories to the root of the object
 	  		let subcats = d["types"][0]["catid"].split(".")
-	  		d.code = types[subcats[0] + subcats[1] + "," + subcats[2]] || types["22.19"]
-	  		//console.log(d.code)
+	  		d.type = types[subcats[0] + subcats[1] + "," + subcats[2]] || types["22.19"]
 	  	});
-		//console.log(data.forEach(d => console.log(d.code)))
 
 		// Now that the data has been reformatted to our liking we can calculate the domains
 		// For our axes
 		x.domain(d3.extent(data, function(d) { return d.lng; }));
 		y.domain(d3.extent(data, function(d) { return d.lat; }));
+		
 		svg.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + height + ")")
@@ -161,30 +120,28 @@ function drawScatterPlot(){
 		.attr("cy", function(d) { return y(d.lat); })
 		.style("fill", function(d) {
 			//Let's color the circles based on the type of event
-			return color(d.code)
-			//Here's a piece of code that colors each event based on when it was last updated
-			/*
-			//Credit for date calculation goes to https://stackoverflow.com/a/3224854/5440366 
-			let now = new Date()
-			let then = new Date(d.lastupdated)
-			let deltaTime = Math.abs(now.getTime() - then.getTime());
-			let deltaYEars = Math.round(deltaTime / (1000 * 3600 * 24 * 365.25));
-			//console.log(deltaYEars, color(deltaYEars))
-			deltaYEars = deltaYEars > 2 ? 2 : deltaYEars
-			return color(deltaYEars); 
-			*/
+			return color(d.type)
 		})
 		//This line adds a mouseover event that changes the preview image to one corresponding
 		// to the right event
 		.on('mouseover', function(d) { 
 			glob = toolTip
-			console.log(d["title"]); 
+			//console.log(d["title"]); 
 			toolTip
 				.text(d.title)
 				.style("left", d3.event.pageX - 70 +"px")
 				.style("top", d3.event.pageY - 40 +"px")
 			changePreview(d["media"][0]["url"])
 		})
+
+		// TODO: Made a start with zooming behavior but need to get the axes to play along as well
+		// 	Here's an example of how that's done: http://blockbuilder.org/EfratVil/d956f19f2e56a05c31fb6583beccfda7
+		//	The way I'd do it myself is to recalculate the domain based on which values are within the range
+		d3.select('body').call(d3.zoom().scaleExtent([1/3, 3]).on('zoom', onzoom));
+		function onzoom() {
+		  svg.selectAll(".dot").attr('transform', d3.event.transform);
+		  x.domain(d3.extent(data, function(d) { console.log(d); return d.lng; }));
+		}
 
 		var legend = svg.selectAll(".legend")
 		.data(color.domain())
@@ -209,27 +166,28 @@ function drawScatterPlot(){
 
 		function update(category){
 			d3.selectAll('circle')
-			.classed("hide", function(d) { return d.code !== category})
+			.attr('r', 15)
+			.classed("hide", function(d) { return d.type !== category})
+			.transition()
+				.duration(1500)
+				.ease(d3.easeBounce)
+				.attr('r', 3.5)
 		}
 
 		function showAll(){
 			d3.selectAll('circle')
 			.classed("hide", false)
+			.attr("r", 3.5)
+		}
+
+		function highlightCat(category){
+			console.log(category)
 		}
 
 		//A function that allows us to dynamically change the source of the preview image
 		function changePreview(source){
-			console.log(source)
+			//console.log(source)
 			image.attr("xlink:href", source)
 		}
 	});
 }
-
-/* BAsics:
-const url = "https://open.data.amsterdam.nl/Attracties.json"
-
-d3.json(url, function(error, data) {
-  	console.dir(data)
-  	console.table(data)
-});
-*/

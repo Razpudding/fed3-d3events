@@ -38,8 +38,8 @@ The list above is of datatype string unless mentioned otherwise
 [x] Translate categories and map them to color
 [ ] Make scatterplot of price and category
 [ ] Zoom in on the data a bit more to remove outliers (do this with the range possibly)
-[ ] Add interaction (filtering data when clicking on legend, add class hidden)
+[x] Add interaction (filtering data when clicking on legend, add class hidden)
 [x] Add image of event or title on mouseover (possible to the right of the graph)
 [x] Add the legend back
 [ ] Add a preview image to this readme.
-[ ] Implement zoom, possibly using [this](https://bl.ocks.org/rutgerhofste/5bd5b06f7817f0ff3ba1daa64dee629d)
+[x] Implement zoom, possibly using [this](https://bl.ocks.org/rutgerhofste/5bd5b06f7817f0ff3ba1daa64dee629d)
