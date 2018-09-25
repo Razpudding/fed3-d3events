@@ -8,6 +8,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40}
 var width = 960 - margin.left - margin.right
 var height = 500 - margin.top - margin.bottom
 var previewPicWidth = 400
+var dotSize = 3.5;
 
 //These are the categories I've estimated are in the data
 const types = {
@@ -115,7 +116,7 @@ function drawScatterPlot(){
 		.data(data)
 		.enter().append("circle")
 		.attr("class", "dot")
-		.attr("r", 3.5)
+		.attr("r", dotSize)
 		.attr("cx", function(d) { return x(d.lng); })
 		.attr("cy", function(d) { return y(d.lat); })
 		.style("fill", function(d) {
@@ -137,10 +138,16 @@ function drawScatterPlot(){
 		// TODO: Made a start with zooming behavior but need to get the axes to play along as well
 		// 	Here's an example of how that's done: http://blockbuilder.org/EfratVil/d956f19f2e56a05c31fb6583beccfda7
 		//	The way I'd do it myself is to recalculate the domain based on which values are within the range
-		d3.select('body').call(d3.zoom().scaleExtent([1/3, 3]).on('zoom', onzoom));
-		function onzoom() {
-		  svg.selectAll(".dot").attr('transform', d3.event.transform);
-		  x.domain(d3.extent(data, function(d) { console.log(d); return d.lng; }));
+		d3.select('body').call(d3.zoom().scaleExtent([1/3, 5]).on('zoom', onzoom));
+		function onzoom(a, b, c) {
+			console.log(d3.event.transform);
+			svg.selectAll(".dot")
+			.attr('transform', d3.event.transform)
+			.attr('r', dotSize / d3.event.transform.k);
+			x.domain(d3.extent(data, function(d) {
+				// console.log(d);
+				return d.lng;
+			}));
 		}
 
 		var legend = svg.selectAll(".legend")
