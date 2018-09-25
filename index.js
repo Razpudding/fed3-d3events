@@ -9,6 +9,7 @@ var width = 960 - margin.left - margin.right
 var height = 500 - margin.top - margin.bottom
 var previewPicWidth = 400
 var dotSize = 3.5;
+var zoomLevel = 1;
 
 //These are the categories I've estimated are in the data
 const types = {
@@ -140,10 +141,10 @@ function drawScatterPlot(){
 		//	The way I'd do it myself is to recalculate the domain based on which values are within the range
 		d3.select('body').call(d3.zoom().scaleExtent([1/3, 5]).on('zoom', onzoom));
 		function onzoom(a, b, c) {
-			console.log(d3.event.transform);
+			zoomLevel = d3.event.transform.k;
 			svg.selectAll(".dot")
 			.attr('transform', d3.event.transform)
-			.attr('r', dotSize / d3.event.transform.k);
+			.attr('r', getDotSize());
 			x.domain(d3.extent(data, function(d) {
 				// console.log(d);
 				return d.lng;
@@ -173,18 +174,18 @@ function drawScatterPlot(){
 
 		function update(category){
 			d3.selectAll('circle')
-			.attr('r', 15)
+			.attr('r', getDotSize() * 5)
 			.classed("hide", function(d) { return d.type !== category})
 			.transition()
 				.duration(1500)
 				.ease(d3.easeBounce)
-				.attr('r', 3.5)
+				.attr('r', getDotSize())
 		}
 
 		function showAll(){
 			d3.selectAll('circle')
 			.classed("hide", false)
-			.attr("r", 3.5)
+			.attr("r", getDotSize())
 		}
 
 		function highlightCat(category){
@@ -195,6 +196,10 @@ function drawScatterPlot(){
 		function changePreview(source){
 			//console.log(source)
 			image.attr("xlink:href", source)
+		}
+
+		function getDotSize() {
+			return dotSize / zoomLevel;
 		}
 	});
 }
