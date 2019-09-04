@@ -1,15 +1,10 @@
-/* jslint browser:true, devel:true, eqeq:true, plusplus:true, sloppy:true, vars: true, white:true, esversion:6, asi:true*/
-//I'm using this global variable in case I want to expose any part of the data
-// To the global scope so I can debug it in the browser console on the go
-var glob;
-
 // Set the stage
-var margin = {top: 20, right: 20, bottom: 30, left: 40}
-var width = 960 - margin.left - margin.right
-var height = 500 - margin.top - margin.bottom
-var previewPicWidth = 400
-var dotSize = 3.5;
-var zoomLevel = 1;
+const previewPicWidth = 400
+const margin = {top: 20, right: previewPicWidth, bottom: 30, left: 40}
+const width = 960 - margin.left - margin.right
+const height = 500 - margin.top - margin.bottom
+const dotSize = 3.5;
+let zoomLevel = 1;
 
 //These are the categories I've estimated are in the data
 const types = {
@@ -37,24 +32,24 @@ const types = {
 	"22,9" : "Monumenten"
 }
 
-//Let's call drawScatterPlot actually draw the scatterplot
+//Let's call drawScatterPlot to actually draw the scatterplot
 drawScatterPlot()
 
 function drawScatterPlot(){
-	var x = d3.scaleLinear()
+	const x = d3.scaleLinear()
 	.range([0, width]);
-	var y = d3.scaleLinear()
+	const y = d3.scaleLinear()
 	.range([height, 0]);
-	//var color = d3.scaleOrdinal(["orange","grey","black"]);
-	var color = d3.scaleOrdinal(d3.schemeCategory20)
-	var xAxis = d3.axisBottom(x)
-	var yAxis = d3.axisLeft(y)
+	//const color = d3.scaleOrdinal(["orange","grey","black"]);
+	const color = d3.scaleOrdinal(d3.schemePaired)
+	const xAxis = d3.axisBottom(x)
+	const yAxis = d3.axisLeft(y)
 	
-	var svg = d3.select("body").append("svg")
+	let svg = d3.select("svg")
 	.attr("width", width + margin.left + margin.right + previewPicWidth)
 	.attr("height", height + margin.top + margin.bottom)
 	//This element will hold our preview images when a user mouses over a circle
-	var image = svg.append("svg:image")
+	const image = svg.append("svg:image")
 		.attr("width", 400)
 		.attr("height", 400)
 		.attr("x", width + margin.left)
@@ -62,16 +57,19 @@ function drawScatterPlot(){
 	// transformed group instead. Probably a nicer way to do this
 	svg = svg	
 	.append("g")
-	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+  .attr("width", "50%")
 
-	var toolTip = d3.select("body").append("div").attr("class", "toolTip");
+	const toolTip = d3.select("body").append("div").attr("class", "toolTip");
 	
 	// Let's draw the actual chart
 	// This chart is based off of: https://bl.ocks.org/mbostock/3887118
-	d3.json("eventData.json", function(error, data) {
+	d3.json("eventData.json").then(data => {
+    console.log(data)
 		//turn on the next line if you want to work with a small data test set
 		//data = data.splice(data.length - 10)
-		if (error) throw error;
+		
+    console.log("data parsed")
 		//Let's rewrite the data a bit to more usable notation
 		//First we write the latlng info directly to the root of the object
 		data.forEach(function(d) {
@@ -127,7 +125,6 @@ function drawScatterPlot(){
 		//This line adds a mouseover event that changes the preview image to one corresponding
 		// to the right event
 		.on('mouseover', function(d) { 
-			glob = toolTip
 			//console.log(d["title"]); 
 			toolTip
 				.text(d.title)
@@ -151,7 +148,7 @@ function drawScatterPlot(){
 			}));
 		}
 
-		var legend = svg.selectAll(".legend")
+		const legend = svg.selectAll(".legend")
 		.data(color.domain())
 		.enter().append("g")
 		.attr("class", "legend")
@@ -186,10 +183,6 @@ function drawScatterPlot(){
 			d3.selectAll('circle')
 			.classed("hide", false)
 			.attr("r", getDotSize())
-		}
-
-		function highlightCat(category){
-			console.log(category)
 		}
 
 		//A function that allows us to dynamically change the source of the preview image

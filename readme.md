@@ -21,7 +21,7 @@ The list above is of datatype string unless mentioned otherwise
 ## Features
 - Each event is mapped to a scatterplot where x and y axis are determined by longitutude and latitude, providing a rudimentary "map"
 - The color of each event is determined by the type of event (category) and connected to a label in the legend.
-- The color can also be mapped to how long ago the veent decription has been updated.
+- The color can also be mapped to how long ago the event decription has been updated.
 
 ## Steps taken
 * Print a couple of objects in the dataset to make sense of the information it holds
@@ -42,4 +42,4 @@ The list above is of datatype string unless mentioned otherwise
 [x] Add image of event or title on mouseover (possible to the right of the graph)
 [x] Add the legend back
 [ ] Add a preview image to this readme.
-[x] Implement zoom, possibly using [this](https://bl.ocks.org/rutgerhofste/5bd5b06f7817f0ff3ba1daa64dee629d)
+[x] Implement zoom
